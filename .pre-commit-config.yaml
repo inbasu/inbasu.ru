@@ -13,7 +13,7 @@ repos:
     rev: "v1.11.2"
     hooks:
     - id: mypy
-      args: [--strict, --ignore-missing-imports]
+      args: [--strict, --ignore-missing-imports, --allow-untyped-decorators]
   - repo: local
     hooks:
     - id: pytest

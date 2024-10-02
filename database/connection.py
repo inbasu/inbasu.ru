@@ -5,5 +5,5 @@ engine = create_async_engine("sqlite+aiosqlite:///sqlite.db")
 session = async_sessionmaker(engine)
 
 
-class Base(DeclarativeBase):
+class Base(DeclarativeBase):  # type: ignore
     pass

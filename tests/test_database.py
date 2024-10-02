@@ -22,7 +22,7 @@ def teardown_module() -> None:
 @pytest_asyncio.fixture
 async def hello_word() -> Word:
     async with session() as conn:
-        hello = await conn.scalar(select(Word))
+        hello: Word = await conn.scalar(select(Word))
     return hello
 
 
@@ -33,5 +33,5 @@ async def test_database_connection() -> None:
 
 
 @pytest.mark.asyncio
-async def test_word_attrs(hello_word) -> None:
+async def test_word_attrs(hello_word: Word) -> None:
     assert hello_word.value == "hello"
