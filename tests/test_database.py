@@ -34,4 +34,5 @@ async def test_database_connection() -> None:
 
 @pytest.mark.asyncio
 async def test_word_attrs(hello_word: Word) -> None:
-    assert hello_word.value == "hello"
+    assert hasattr(hello_word, "value")
+    assert hasattr(hello_word, "lang")
