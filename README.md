@@ -2,4 +2,4 @@
 ##### TODO
 - [ ] DatabaseRepo
 - [ ] API Endpoints
-- [ ] Telegram integrations
+- [ ] Telegram integration
