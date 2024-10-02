@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "inbasu-ru"
+version = "0.1.0"
+description = ""
+authors = ["Inbasu <just.me.juncy@gmail.com>"]
+readme = "README.md"
+packages = [{include = "inbasu"}]
+
+[tool.poetry.dependencies]
+python = "3.9"
+fastapi = "^0.115.0"
+SQLAlchemy = "^2.0.35"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+pytest_async = "^0.1.1"
+pre-commit = "^3.8.0"
+coverage = "^7.6.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
