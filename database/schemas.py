@@ -17,7 +17,7 @@ class Word(Base):
     __tablename__ = "words"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    value: Mapped[str]
+    value: Mapped[str] = mapped_column()
     lang: Mapped[str]
     translation: Mapped[List["Word"]] = relationship(
         secondary=translations,

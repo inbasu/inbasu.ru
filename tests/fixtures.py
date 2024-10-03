@@ -1,4 +1,4 @@
-from database.connection import Base, engine, session
+from database.connection import Base, engine, session_maker
 from database.schemas import Word
 
 
@@ -13,7 +13,7 @@ async def drop_table() -> None:
 
 
 async def create_word_hello() -> None:
-    async with session() as s:
+    async with session_maker() as s:
         w1 = Word(value="hello", lang="en")
         w2 = Word(value="bonjour", lang="fr")
         w1.translation = [w2]
