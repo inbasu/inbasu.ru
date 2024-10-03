@@ -23,5 +23,4 @@ class Word(Base):
         secondary=translations,
         primaryjoin=id == translations.c.left_id,
         secondaryjoin=id == translations.c.right_id,
-        back_populates="translation",
     )
