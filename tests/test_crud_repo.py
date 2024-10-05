@@ -1,4 +1,5 @@
 import asyncio
+from typing import Any, AsyncGenerator
 
 import pytest
 import pytest_asyncio
@@ -21,14 +22,14 @@ def teardown_module() -> None:
 
 
 @pytest_asyncio.fixture
-async def session() -> AsyncSession:
-    return session_maker()
+async def session() -> AsyncGenerator[AsyncSession, Any]:
+    async with session_maker() as connection:
+        yield connection
 
 
 @pytest.mark.asyncio
 async def test_get_item(session: AsyncSession) -> None:
     word = await Dictionary.get(session=session, language="fr", value="bonjour")
-    await session.close()
     assert word.__class__ == Word
     assert word.language.name == "fr" if word is not None else False
     assert word.translation[0].value == "hello" if word is not None else False
