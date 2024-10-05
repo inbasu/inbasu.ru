@@ -10,7 +10,7 @@ from database.schemas import Language, Word
 class Dictionary:
 
     @classmethod
-    async def get(cls, session: AsyncSession, value: str, language: str) -> Optional[Word]:
+    async def get_word(cls, session: AsyncSession, value: str, language: str) -> Optional[Word]:
         result: Union[Word, None] = await session.scalar(
             select(Word)
             .join(Language)
@@ -30,3 +30,16 @@ class Dictionary:
             .options(joinedload(Word.language), joinedload(Word.translation))
         )
         return result
+
+    @classmethod
+    async def add_word(cls, session: AsyncSession, value: str, language: str):
+        lang = await session.scalar(select(Language).where(Language.name == language))
+        word = Word(value=value, language=lang)
+        session.add(word)
+        await session.commit()
+        return word
+
+
+#     @classmethod
+#     async def set_translation(cls):
+#         pass

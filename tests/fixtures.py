@@ -31,7 +31,7 @@ async def create_word_hello() -> None:
 
 async def create_lang() -> None:
     async with session_maker() as s:
-        s.add_all([Language(name="en"), Language(name="fr")])
+        s.add_all([Language(name="en"), Language(name="fr"), Language(name="ru")])
         await s.commit()
 
 

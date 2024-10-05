@@ -25,7 +25,7 @@ class Word(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     value: Mapped[str] = mapped_column()
-    language_id: Mapped[int] = mapped_column(ForeignKey("languages.id"))
+    language_id: Mapped[int] = mapped_column(ForeignKey("languages.id"), nullable=False)
     translation: Mapped[List["Word"]] = relationship(
         secondary=translations,
         primaryjoin=id == translations.c.left_id,
