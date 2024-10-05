@@ -1,15 +1,32 @@
-from sqlalchemy.ext.asyncio import async_sessionmaker
+from typing import Optional, Union
 
-from .schemas import Word
+from sqlalchemy import and_, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import aliased, joinedload
+
+from database.schemas import Language, Word
 
 
 class Dictionary:
 
-    def __init__(self, session_maker) -> None:
-        self.session_maker: async_sessionmaker = session_maker
+    @classmethod
+    async def get(cls, session: AsyncSession, value: str, language: str) -> Optional[Word]:
+        result: Union[Word, None] = await session.scalar(
+            select(Word)
+            .join(Language)
+            .where(and_(Word.value == value, Language.name == language))
+            .options(joinedload(Word.language), joinedload(Word.translation))
+        )
+        return result
 
-    async def add(self, word: Word) -> Word:
-        async with self.session_maker() as s:
-            s.add(word)
-            await s.commit()
-        return word
+    @classmethod
+    async def get_translation(cls, session: AsyncSession, language: str, value: str) -> Optional[Word]:
+        word = aliased(Word)
+        result: Union[Word, None] = await session.scalar(
+            select(Word)
+            .join(Language)
+            .join(Word.translation.of_type(word))
+            .where(and_(Word.translation.any(word.value == value), Language.name == language))
+            .options(joinedload(Word.language), joinedload(Word.translation))
+        )
+        return result
