@@ -20,14 +20,22 @@ class Dictionary:
         return result
 
     @classmethod
-    async def get_translation(cls, session: AsyncSession, language: str, value: str) -> Optional[Word]:
+    async def get_translation(cls, session: AsyncSession, language: str, value: str, to: str) -> Optional[Word]:
         word = aliased(Word)
+        lang = aliased(Language)
         result: Union[Word, None] = await session.scalar(
             select(Word)
             .join(Language)
             .join(Word.translation.of_type(word))
-            .where(and_(Word.translation.any(word.value == value), Language.name == language))
-            .options(joinedload(Word.language), joinedload(Word.translation))
+            .join(word.language.of_type(lang))
+            .where(
+                and_(
+                    Word.translation.any(word.value == value),
+                    Word.translation.any(lang.name == language),
+                    Language.name == to,
+                )
+            )
+            .options(joinedload(Word.language))
         )
         return result
 
