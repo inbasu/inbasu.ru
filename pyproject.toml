@@ -8,7 +8,7 @@ packages = [{include = "inbasu"}]
 
 [tool.poetry.dependencies]
 python = "3.9.20"
-fastapi = "^0.115.0"
+fastapi = {extras = ["standard"], version = "^0.115.0"}
 SQLAlchemy = "^2.0.35"
 pytest-asyncio = "^0.24.0"
 

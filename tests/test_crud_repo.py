@@ -36,6 +36,8 @@ async def test_get_item(session: AsyncSession) -> None:
 
 @pytest.mark.asyncio
 async def test_get_translation(session: AsyncSession, hello_word: Word) -> None:
-    bonjour = await Dictionary.get_translation(session, language="fr", value=hello_word.value)
+    bonjour = await Dictionary.get_translation(
+        session, to="fr", language=hello_word.language.name, value=hello_word.value
+    )
     assert hello_word.translation[0].value == bonjour.value if bonjour is not None else False
     assert hello_word.translation[0].language.name == bonjour.language.name if bonjour is not None else False
