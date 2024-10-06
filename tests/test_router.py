@@ -21,5 +21,6 @@ def teardown_module() -> None:
 async def test_translate_word() -> None:
     async with AsyncClient(transport=ASGITransport(app=dictionary), base_url="http://test") as client:
         response = await client.get("/word/en/hello/in/fr/")
+    print(response.json())
     assert response.json().get("value", "") == "bonjour"
     assert response.json().get("language", {}).get("name", "") == "fr"
