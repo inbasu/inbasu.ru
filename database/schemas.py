@@ -24,7 +24,7 @@ class Word(Base):
     __tablename__ = "words"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    value: Mapped[str] = mapped_column()
+    value: Mapped[str] = mapped_column(String(24))
     language_id: Mapped[int] = mapped_column(ForeignKey("languages.id"), nullable=False)
     translation: Mapped[List["Word"]] = relationship(
         secondary=translations,

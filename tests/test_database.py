@@ -13,10 +13,12 @@ from .fixtures import create_table, create_word_hello, drop_table, hello_word  #
 def setup_module() -> None:
     asyncio.run(create_table())
     asyncio.run(create_word_hello())
+    pass
 
 
 def teardown_module() -> None:
     asyncio.run(drop_table())
+    pass
 
 
 @pytest_asyncio.fixture

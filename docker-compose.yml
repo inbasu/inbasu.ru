@@ -1,0 +1,14 @@
+services:
+
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: sqlalchemy
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user 
+      MYSQ:_PASSWORD: password
+    ports:
+      - '3306:3306'
+    volumes:
+      - /var/lib/mysql
