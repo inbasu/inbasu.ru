@@ -7,3 +7,4 @@
 - [ ] API Endpoints
 - [ ] Telegram integration
 - [ ] Frontend
+- [ ] Tasks
