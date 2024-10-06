@@ -1,4 +1,3 @@
-import asyncio
 from typing import Any, AsyncGenerator
 
 import pytest
@@ -14,22 +13,13 @@ from database.schemas import Word
 from .fixtures import create_table, create_word_hello, drop_table, hello_word  # noqa
 
 
-def setup_module() -> None:
-    asyncio.run(create_table())
-    asyncio.run(create_word_hello())
-
-
-def teardown_module() -> None:
-    asyncio.run(drop_table())
-
-
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(loop_scope="session")
 async def session() -> AsyncGenerator[AsyncSession, Any]:
     async with session_maker() as connection:
         yield connection
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_get_item(session: AsyncSession) -> None:
     word = await Dictionary.get_word(session=session, language="fr", value="bonjour")
     assert word.__class__ == Word
@@ -37,7 +27,7 @@ async def test_get_item(session: AsyncSession) -> None:
     assert word.translation[0].value == "hello" if word is not None else False
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_get_translation(session: AsyncSession, hello_word: Word) -> None:
     bonjour = await Dictionary.get_translation(
         session, to="fr", language=hello_word.language.name, value=hello_word.value
@@ -46,7 +36,7 @@ async def test_get_translation(session: AsyncSession, hello_word: Word) -> None:
     assert hello_word.translation[0].language.name == bonjour.language.name if bonjour is not None else False
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_add_word(session: AsyncSession) -> None:
     await Dictionary.add_word(session, language="ru", value="привет")
     created = await session.scalar(select(Word).where(Word.value == "привет").options(joinedload(Word.language)))
