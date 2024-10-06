@@ -1,6 +1,5 @@
 import asyncio
 
-import fixtup
 import pytest
 import pytest_asyncio
 from sqlalchemy import select, text
@@ -12,9 +11,8 @@ from .fixtures import create_table, create_word_hello, drop_table, hello_word  #
 
 
 def setup_module() -> None:
-    with fixtup.up("mysql"):
-        asyncio.run(create_table())
-        asyncio.run(create_word_hello())
+    asyncio.run(create_table())
+    asyncio.run(create_word_hello())
 
 
 def teardown_module() -> None:
