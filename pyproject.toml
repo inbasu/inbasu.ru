@@ -12,15 +12,24 @@ fastapi = {extras = ["standard"], version = "^0.115.0"}
 SQLAlchemy = "^2.0.35"
 pytest-asyncio = "^0.24.0"
 httpx = "^0.27.2"
+aiomysql = "^0.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
 pre-commit = "^3.8.0"
 coverage = "^7.6.1"
 aiosqlite = "^0.20.0"
+fixtup = "^0.1.5"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 
+
+[tools.fixtup]
+fixtures = "tests/database"
+plugins = [
+    "fixtup.plugins.dotenv",
+    "fixtup.plugins.docker"
+]
