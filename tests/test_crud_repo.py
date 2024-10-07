@@ -32,17 +32,30 @@ async def test_get_translation(session: AsyncSession, hello_word: Word) -> None:
     bonjour = await Dictionary.get_translation(
         session, to="fr", language=hello_word.language.name, value=hello_word.value
     )
-    assert hello_word.translation[0].value == bonjour.value if bonjour is not None else False
-    assert hello_word.translation[0].language.name == bonjour.language.name if bonjour is not None else False
+    assert (
+        hello_word.translation[0].value == bonjour.value
+        if bonjour is not None
+        else False
+    )
+    assert (
+        hello_word.translation[0].language.name == bonjour.language.name
+        if bonjour is not None
+        else False
+    )
 
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_add_word(session: AsyncSession) -> None:
     await Dictionary.add_word(session, language="ru", value="привет")
-    created = await session.scalar(select(Word).where(Word.value == "привет").options(joinedload(Word.language)))
+    created = await session.scalar(
+        select(Word).where(Word.value == "привет").options(joinedload(Word.language))
+    )
     assert created.__class__ == Word
     assert created.language.name == "ru"
 
 
-if __name__ == '__main__':
-    pass
+@pytest.mark.asyncio(loop_scope="session")
+async def test_get_eng_words(session: AsyncSession) -> None:
+    words = await Dictionary.get_all_words(session, "en")
+    assert len(words) == 2
+    assert words[0].value == "hello"

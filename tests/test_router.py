@@ -12,3 +12,10 @@ async def test_translate_word() -> None:
         response = await client.get("/word/en/hello/in/fr/")
     assert response.json().get("value", "") == "bonjour"
     assert response.json().get("language", {}).get("name", "") == "fr"
+
+
+@pytest.mark.asyncio(loop_scope="session")
+async def test_get_eng_words() -> None:
+    async with AsyncClient(transport=ASGITransport(app=dictionary), base_url="http://test") as client:
+        response = await client.get("/words/en/")
+    assert len(response.json()) == 2

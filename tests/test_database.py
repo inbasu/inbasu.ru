@@ -51,7 +51,7 @@ async def test_get_eng_words(eng: Language) -> None:
     async with session_maker() as s:
         query = await s.scalars(select(Word).where(Word.language == eng))
     words = query.unique().all()
-    assert len(words) == 1
+    assert len(words) == 2
     assert words[0].value == "hello"
 
 
