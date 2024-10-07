@@ -27,9 +27,10 @@ async def create_word_hello() -> None:
         fr: Language = await s.scalar(select(Language).where(Language.name == "fr"))
         w1: Word = Word(value="hello", language=en)
         w2: Word = Word(value="bonjour", language=fr)
+        w3: Word = Word(value="world", language=en)
         w1.translation = [w2]
         w2.translation = [w1]
-        s.add_all([w1, w2])
+        s.add_all([w1, w2, w3])
         await s.commit()
 
 

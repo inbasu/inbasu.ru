@@ -1,6 +1,6 @@
-from typing import Optional, Union
+from typing import Optional, Sequence, Union
 
-from sqlalchemy import and_, select
+from sqlalchemy import ScalarResult, and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, joinedload
 
@@ -17,6 +17,14 @@ class Dictionary:
             .where(and_(Word.value == value, Language.name == language))
             .options(joinedload(Word.language), joinedload(Word.translation))
         )
+        return result
+
+    @classmethod
+    async def get_all_words(cls, session: AsyncSession, language: Union[str, None]) -> Sequence[Word]:
+        sequance: ScalarResult = await session.scalars(
+            select(Word).join(Language).where(Language.name == language).order_by(Word.value)
+        )
+        result: Sequence[Word] = sequance.unique().all()
         return result
 
     @classmethod
