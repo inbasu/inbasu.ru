@@ -34,5 +34,9 @@ class Word(Base):
     )
 
     language: Mapped[Language] = relationship(
-        "Language", primaryjoin=language_id == Language.id, uselist=False, backref="translations", lazy="joined"
+        "Language",
+        primaryjoin=language_id == Language.id,
+        uselist=False,
+        backref="translations",
+        lazy="joined",
     )

@@ -10,8 +10,6 @@ from database.connection import session_maker
 from database.repository import Dictionary
 from database.schemas import Word
 
-from .fixtures import create_table, create_word_hello, drop_table, hello_word  # noqa
-
 
 @pytest_asyncio.fixture(loop_scope="session")
 async def session() -> AsyncGenerator[AsyncSession, Any]:
@@ -21,35 +19,39 @@ async def session() -> AsyncGenerator[AsyncSession, Any]:
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_get_item(session: AsyncSession) -> None:
-    word = await Dictionary.get_word(session=session, language="fr", value="bonjour")
+    word = await Dictionary.get_word(
+        session=session,
+        language="fr",
+        value="bonjour",
+    )
+    assert word is not None
     assert word.__class__ == Word
-    assert word.language.name == "fr" if word is not None else False
-    assert word.translation[0].value == "hello" if word is not None else False
+    assert word.language.name == "fr"
+    assert word.translation[0].value == "hello"
 
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_get_translation(session: AsyncSession, hello_word: Word) -> None:
     bonjour = await Dictionary.get_translation(
-        session, to="fr", language=hello_word.language.name, value=hello_word.value
+        session=session,
+        to="fr",
+        language=hello_word.language.name,
+        value=hello_word.value,
     )
-    assert (
-        hello_word.translation[0].value == bonjour.value
-        if bonjour is not None
-        else False
-    )
-    assert (
-        hello_word.translation[0].language.name == bonjour.language.name
-        if bonjour is not None
-        else False
-    )
+    assert bonjour is not None
+    assert hello_word.translation[0].value == bonjour.value
+    assert hello_word.translation[0].language.name == bonjour.language.name
 
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_add_word(session: AsyncSession) -> None:
-    await Dictionary.add_word(session, language="ru", value="привет")
-    created = await session.scalar(
-        select(Word).where(Word.value == "привет").options(joinedload(Word.language))
+    await Dictionary.add_word(
+        session=session,
+        language="ru",
+        value="привет",
     )
+    created = await session.scalar(select(Word).where(Word.value == "привет").options(joinedload(Word.language)))
+    assert created is not None
     assert created.__class__ == Word
     assert created.language.name == "ru"
 
