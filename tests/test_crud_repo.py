@@ -42,3 +42,7 @@ async def test_add_word(session: AsyncSession) -> None:
     created = await session.scalar(select(Word).where(Word.value == "привет").options(joinedload(Word.language)))
     assert created.__class__ == Word
     assert created.language.name == "ru"
+
+
+if __name__ == '__main__':
+    pass
