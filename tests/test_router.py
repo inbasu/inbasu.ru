@@ -13,7 +13,7 @@ async def client() -> AsyncClient:
 
 
 @pytest.mark.asyncio(loop_scope="session")
-async def test_translate_word(client) -> None:
+async def test_translate_word(client: AsyncClient) -> None:
     response = await client.get("/word/en/hello/in/fr/")
     assert response.json().get("value", "") == "bonjour"
     assert response.json().get("language", {}).get("name", "") == "fr"

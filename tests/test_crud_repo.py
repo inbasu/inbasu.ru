@@ -9,6 +9,7 @@ from sqlalchemy.orm import joinedload
 from database.connection import session_maker
 from database.repository import Dictionary
 from database.schemas import Word
+
 from .fixtures import hello_word  # noqa
 
 
