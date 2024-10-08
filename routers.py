@@ -13,7 +13,7 @@ dictionary = FastAPI()
 
 @dictionary.get("/words/{language}/", response_model=list[WordValue])
 async def get_all_words_of_language(language: str, db: AsyncSession = Depends(session)) -> Any:
-    return await Words(db).get_all_words(language=Language(name=language))
+    return await Words(db).get(language=Language(name=language))
 
 
 @dictionary.get("/word/{base}/{word}/in/{lang}/", response_model=WordModel)

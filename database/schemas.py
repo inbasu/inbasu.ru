@@ -1,7 +1,8 @@
-from typing import List
+from typing import Any, List
 
 from sqlalchemy import Column, ForeignKey, String, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing_extensions import Unpack
 
 from .connection import Base
 
@@ -16,8 +17,16 @@ translations = Table(
 class Language(Base):
     __tablename__ = "languages"
 
+    def __init__(self, **kwargs: str) -> None:
+        self.sql: str = ", ".join([f'{self.__class__.__name__}.{arg} == "{value}"' for arg, value in kwargs.items()])
+        super().__init__(**kwargs)
+
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(3), unique=True)
+
+    @property
+    def __sql__(self) -> str:
+        return self.sql
 
 
 class Word(Base):

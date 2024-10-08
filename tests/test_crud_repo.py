@@ -1,4 +1,4 @@
-from typing import Any, AsyncGenerator
+from typing import Any, AsyncGenerator, Sequence
 
 import pytest
 import pytest_asyncio
@@ -21,11 +21,11 @@ async def session() -> AsyncGenerator[AsyncSession, Any]:
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_get_item(session: AsyncSession) -> None:
-    word = await Words(session).get_word(language="fr", value="bonjour")
-    assert word is not None
-    assert word.__class__ == Word
-    assert word.language.name == "fr"
-    assert word.translation[0].value == "hello"
+    words: Sequence[Word] = await Words(session).get(language=Language(name="fr"), value="bonjour")
+    assert words is not None
+    assert words[0].__class__ == Word
+    assert words[0].language.name == "fr"
+    assert words[0].translation[0].value == "hello"
 
 
 @pytest.mark.asyncio(loop_scope="session")
@@ -51,7 +51,7 @@ async def test_add_word(session: AsyncSession) -> None:
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_get_eng_words(session: AsyncSession) -> None:
-    words = await Words(session).get_all_words(Language(name="en"))
+    words = await Words(session).get(language=Language(name="en"))
     assert len(words) == 2
     assert words[0].value == "hello"
 
@@ -65,6 +65,6 @@ async def test_update_word(session: AsyncSession) -> None:
     session.add(word)
     await session.commit()
     await session.refresh(word)
-    updated = await Words(session).update(word, value="faux")
+    updated: Word = await Words(session).update(word, value="faux")  # type: ignore
     assert updated.__class__ == Word
     assert updated.value == "faux"
