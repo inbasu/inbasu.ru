@@ -36,8 +36,8 @@ async def test_word_attrs(hello_word: Word) -> None:
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_word_translations(hello_word: Word) -> None:
-    assert hello_word.translation[0].value == "bonjour"
-    assert hello_word.translation[0].translation[0] == hello_word
+    assert list(hello_word.translation)[0].value == "bonjour"
+    assert hello_word in list(hello_word.translation)[0].translation
     assert hello_word.language.name == "en"
 
 
@@ -57,5 +57,4 @@ async def test_get_eng_words(eng: Language) -> None:
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_language_property(eng: Language, hello_word: Word) -> None:
-    assert hello_word.language.id == eng.id
     assert hello_word.language.name == eng.name

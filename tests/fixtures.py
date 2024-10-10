@@ -28,9 +28,9 @@ async def create_word_hello() -> None:
         w1: Word = Word(value="hello", language=en)
         w2: Word = Word(value="bonjour", language=fr)
         w3: Word = Word(value="world", language=en)
-        w1.translation = [w2]
-        w2.translation = [w1]
         s.add_all([w1, w2, w3])
+        w1.translation.add(w2)
+        w2.translation.add(w1)
         await s.commit()
 
 

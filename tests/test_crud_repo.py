@@ -1,7 +1,10 @@
 from typing import Any, AsyncGenerator, Sequence
+from venv import create
 
 import pytest
 import pytest_asyncio
+from anyio.abc import value
+from pre_commit.all_languages import languages
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
@@ -25,15 +28,15 @@ async def test_get_item(session: AsyncSession) -> None:
     assert words is not None
     assert words[0].__class__ == Word
     assert words[0].language.name == "fr"
-    assert words[0].translation[0].value == "hello"
+    assert list(words[0].translation)[0].value == "hello"
 
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_get_translation(session: AsyncSession, hello_word: Word) -> None:
     bonjour = await Words(session).get_translation(to="fr", language=hello_word.language.name, value=hello_word.value)
     assert bonjour is not None
-    assert hello_word.translation[0].value == bonjour.value
-    assert hello_word.translation[0].language.name == bonjour.language.name
+    assert list(hello_word.translation)[0].value == bonjour.value
+    assert list(hello_word.translation)[0].language.name == bonjour.language.name
 
 
 @pytest.mark.asyncio(loop_scope="session")
@@ -65,6 +68,21 @@ async def test_update_word(session: AsyncSession) -> None:
     session.add(word)
     await session.commit()
     await session.refresh(word)
-    updated: Word = await Words(session).update(word, value="faux")  # type: ignore
+    updated: Word = await Words(session).update(word, value="faux")  # type: ignorgite
     assert updated.__class__ == Word
     assert updated.value == "faux"
+
+
+@pytest.mark.asyncio(loop_scope="session")
+async def test_link_words(session: AsyncSession) -> None:
+    created: Word = Word(value="hi", language=await session.scalar(select(Language).where(Language.name == "en")))
+    session.add(created)
+    await session.commit()
+    await Words(session).link(
+        await session.scalar(select(Word).where(Word.value == "hi").options(joinedload(Word.translation))),
+        await session.scalar(select(Word).where(Word.value == "bonjour").options(joinedload(Word.translation))),
+    )
+    created = await session.scalar(select(Word).where(Word.value == "hi").options(joinedload(Word.translation)))
+    word = await session.scalar(select(Word).where(Word.value == "bonjour").options(joinedload(Word.translation)))
+    assert created in word.translation
+    assert word in created.translation

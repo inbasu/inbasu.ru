@@ -68,6 +68,12 @@ class Words(Repository):
         )
         return result
 
+    async def link(self, *args) -> None:
+        words = [arg for arg in args if isinstance(arg, Word)]
+        for word in words:
+            word.translation.update([w for w in words if w != word])
+        await self.session.commit()
+
     def _sql(self, language: Optional[Language] = None, value: Optional[str] = None, **kwargs) -> Select[tuple[Word]]:  # type: ignore
         lang = f'Language.name ==  "{language.name}"' if language is not None else ""
         val = f'Word.value == "{value}"' if value is not None else ""
